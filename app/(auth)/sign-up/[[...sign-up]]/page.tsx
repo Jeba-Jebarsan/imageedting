@@ -1,7 +1,26 @@
-import { SignUp } from '@clerk/nextjs'
+import { SignUp } from '@clerk/nextjs';
+import { useAuth } from '@clerk/nextjs';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 const SignUpPage = () => {
-  return <SignUp />
-}
+  const { isLoaded, isSignedIn } = useAuth();
+  const router = useRouter();
 
-export default SignUpPage
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      // Redirect to home page if already signed in
+      router.push('/');
+    }
+  }, [isLoaded, isSignedIn, router]);
+
+  // Show loading state until authentication status is determined
+  if (!isLoaded) {
+    return <div>Loading...</div>;
+  }
+
+  // Render sign-up form if not signed in
+  return <SignUp />;
+};
+
+export default SignUpPage;
